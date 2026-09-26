@@ -296,6 +296,16 @@ static __nocfi __always_inline void *memset_explicit(void *s, int c, size_t coun
 }
 
 /**
+ * older kernels has a way to disable __must_check / nodiscard
+ * prevent that on this codebase.
+ */
+#if __has_c_attribute(nodiscard)
+#define __must_check [[nodiscard]]
+#else
+#define __must_check __attribute__((__warn_unused_result__))
+#endif
+
+/**
  * old compilers does NOT know fallthrough, this is GNU/C23
  * however we can use a comment and it silences it (implicit fallthrough)
  * ref: https://elixir.bootlin.com/linux/v7.2.2/source/include/linux/compiler_attributes.h#L216
